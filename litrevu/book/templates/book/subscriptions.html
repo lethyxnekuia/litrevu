@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container">
+    <main class="container">
+      <div class="row g-5">
+        <div class="col-md-12"> 
+  
+    <div style="text-align:center">  
+  <h2 >Suivre d'autres utilisateurs </h2>
+  
+  <form method="get">
+    
+        <input type="text" name="search" placeholder="Nom d'utilisateur ">
+        
+        <input type="submit" value="Rechercher">
+      
+  </form>
+  {% if user_search %}
+  <h2>Résultat de la recherche:</h2>
+  <ul>
+      {% for user in user_search %}
+      <li class="list-group-item" >
+          {{ user.username}}
+          <button type="button" class="btn btn-outline-warning"><a href="{% url 'followUser' user.id %}">S'abonner</a></button>
+      </li>
+  </ul>
+  {% endfor %}
+  {% endif %}
+
+  <h2>Mes Abonnements:</h2>
+  <ul>
+{% for relation in following %}
+    <li class="list-group-item" >{{ relation.followed_user.username}}  
+        <button type="button" class="btn btn-outline-danger">
+            <a href="{% url 'unfollowUser' relation.followed_user.id %}">Se désabonner</a>
+        </button>
+    </li>
+{% endfor %}
+  </ul>
+
+
+  <h2>Mes Abonnés:</h2>
+<ul class="list-group">
+    {% for relation in followers %}
+        <li class="list-group-item">{{ relation.user.username}}</li>        
+    {% endfor %}
+</ul>
+</div>
+</div>
+</div>
+
+</main>
+</div>
+
+{% endblock %}

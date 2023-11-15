@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="card text-center">
+    <div class="card-header"><h2>Créer une review</h2></div>
+    <div class="card-body">
+        <h3>Livre / Article</h3>
+        <form method="post" enctype="multipart/form-data">        
+            {{ ticket_form.as_p }}
+            <h3>Critique</h3>
+            {{ review_form.as_p }}
+            {% csrf_token %}
+            <a href="{% url 'home' %}" class="btn btn-outline-secondary">Retour</a>
+            <button class="btn btn-primary" type="submit" >Publier</button>
+        </form> 
+    </div>   
+</div>
+{% endblock content %}

@@ -1,26 +1,21 @@
 {% extends 'base.html' %}
 {% block content %}
-<section class="ticket-buttons">
-    <button class="btn btn-primary"><a href="{% url 'ticketCreation' %}">Demander une critique</a></button>
-    <button class="btn btn-primary"><a href="{% url 'ticketAsking' %}" >Créer une critique</a></button>
-</section>
-
-
-
 <section>
     {% for item in items %}
     {% if item.content_type == 'REVIEW' %}
         {% include 'book/partials/review.html' with review=item %}
+        <a href="{% url 'deleteReview' id=item.id %}" class="btn btn-primary">Supprimer</a>
+        <a href="{% url 'modifyReview' id=item.id %}" class="btn btn-primary">Modifier</a>
     {% else %}
     <div class="card text-center">
         <div class="card-header">{{ item.user.username }} a demandé une critique</div>
         <div class="card-body">
         {% include 'book/partials/ticket.html' with ticket=item %}
-        <a href="{% url 'ticketAnswer' pk=item.id %}" class="btn btn-primary">Créer critique</a>
         </div>
     </div>
+    <a href="{% url 'deleteTicket' id=item.id %}" class="btn btn-primary">Supprimer</a>
+    <a href="{% url 'modifyTicket' id=item.id %}" class="btn btn-primary">Modifier</a>
     {% endif %}
     {% endfor %}
 </section>
-
 {% endblock content %}

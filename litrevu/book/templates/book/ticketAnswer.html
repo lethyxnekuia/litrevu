@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+<h3>Livre / Article</h3>
+{% include 'book/partials/ticket.html' with ticket=ticket %}
+<div class="card-body">
+    <form method="post" enctype="multipart/form-data">
+        <h3>Critique</h3>
+        {{ review_form.as_p }}
+        {% csrf_token %}
+        <a href="{% url 'home' %}" class="btn btn-outline-secondary">Retour</a>
+        <button class="btn btn-primary" type="submit" >Publier</button>
+    </form> 
+</div>   
+
+{% endblock content %}
