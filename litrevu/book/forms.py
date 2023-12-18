@@ -7,6 +7,7 @@ class TicketForm(forms.ModelForm):
         model = models.Ticket
         fields = ['title', 'description', 'image']
 
+
 class ReviewForm(forms.ModelForm):
     RATING_CHOICES = (
         (1, "One"),

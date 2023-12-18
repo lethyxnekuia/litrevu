@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
+{% block title %}Flux{% endblock %}
 {% block content %}
+
 <section class="ticket-buttons">
     <button class="btn btn-primary"><a href="{% url 'ticketCreation' %}">Demander une critique</a></button>
     <button class="btn btn-primary"><a href="{% url 'ticketAsking' %}" >Créer une critique</a></button>
@@ -16,7 +18,7 @@
         <div class="card-header">{{ item.user.username }} a demandé une critique</div>
         <div class="card-body">
         {% include 'book/partials/ticket.html' with ticket=item %}
-        <a href="{% url 'ticketAnswer' pk=item.id %}" class="btn btn-primary">Créer critique</a>
+        <button href="{% url 'ticketAnswer' pk=item.id %}" class="btn btn-primary">Créer critique</button>
         </div>
     </div>
     {% endif %}

@@ -13,8 +13,12 @@ def home(request):
     tickets = Ticket.objects.filter(user__followed_by__user=request.user)
     tickets = tickets.annotate(content_type=Value('TICKET', CharField()))
     full_data = list(reviews) + list(tickets)
-    sorted_full_data = sorted(full_data, key=lambda x: x.time_created, reverse=True)
-    return render(request, 'book/home.html', context={'items': sorted_full_data})
+    sorted_full_data = sorted(
+        full_data, key=lambda x: x.time_created, reverse=True
+    )
+    return render(
+        request, 'book/home.html', context={'items': sorted_full_data}
+    )
 
 
 @login_required
@@ -24,12 +28,13 @@ def posts(request):
     tickets = Ticket.objects.filter(user=request.user)
     tickets = tickets.annotate(content_type=Value('TICKET', CharField()))
     full_data = list(reviews) + list(tickets)
-    sorted_full_data = sorted(full_data, key=lambda x: x.time_created, reverse=True)
-    return render(request, 'book/posts.html', context={'items': sorted_full_data})
+    sorted_full_data = sorted(
+        full_data, key=lambda x: x.time_created, reverse=True
+    )
+    return render(
+        request, 'book/posts.html', context={'items': sorted_full_data}
+    )
 
-@login_required
-def subscriptions(request):
-    return render(request, 'book/subscriptions.html')
 
 @login_required
 def ticket_creation(request):
@@ -48,6 +53,10 @@ def ticket_creation(request):
 def ticket_answer(request, pk):
     review_form = forms.ReviewForm()
     ticket = Ticket.objects.filter(pk=pk)[0]
+    if not UserFollows.objects.filter(
+        user=request.user, followed_user=ticket.user
+    ).exists():
+        return redirect('home')
     if request.method == 'POST':
         review_form = forms.ReviewForm(request.POST)
         if review_form.is_valid():
@@ -61,6 +70,7 @@ def ticket_answer(request, pk):
         'ticket': ticket,
     }
     return render(request, 'book/ticketAnswer.html', context=context)
+
 
 @login_required
 def ticket_asking(request):
@@ -84,16 +94,20 @@ def ticket_asking(request):
     }
     return render(request, 'book/ticketAsking.html', context=context)
 
+
 @login_required
 def follow_user(request, id):
     user = User.objects.get(pk=id)
     UserFollows.objects.create(user=request.user, followed_user=user)
     return redirect("subscriptions")
 
+
 @login_required
 def unfollow_user(request, id):
     user = User.objects.get(pk=id)
-    user_follow =UserFollows.objects.get(user=request.user, followed_user=user)
+    user_follow = UserFollows.objects.get(
+        user=request.user, followed_user=user
+    )
     user_follow.delete()
     return redirect("subscriptions")
 
@@ -107,9 +121,7 @@ def subscriptions(request):
     if query == "":
         users = User.objects.all()
 
-    user_follows = []
-    for user_follow in UserFollows.objects.filter(user=request.user):
-        user_follows.append(user_follow.followed_user)
+    user_follows = User.objects.filter(followed_by__user=request.user)
     results = []
     for user in users:
         if user not in user_follows:
@@ -122,40 +134,47 @@ def subscriptions(request):
         "followers": followers,
         "following": following,
     }
-
     return render(request, 'book/subscriptions.html', context)
+
 
 @login_required
 def delete_ticket(request, id):
     ticket = Ticket.objects.get(pk=id)
-    if request.user == ticket.user :
+    if request.user == ticket.user:
         ticket.delete()
     return redirect("posts")
+
 
 @login_required
 def delete_review(request, id):
     review = Review.objects.get(pk=id)
-    if request.user == review.user :
+    if request.user == review.user:
         review.delete()
     return redirect("posts")
+
 
 @login_required
 def modify_ticket(request, id):
     ticket = Ticket.objects.get(pk=id)
-    if request.user != ticket.user :
+    if request.user != ticket.user:
         return redirect("posts")
     if request.method == 'POST':
         form = forms.TicketForm(request.POST, instance=ticket)
         if form.is_valid():
             form.save()
             return redirect('home')
-    return render(request, 'book/ticketCreation.html', context={'form': forms.TicketForm(instance=ticket)})
+    return render(
+        request,
+        'book/ticketCreation.html',
+        context={'form': forms.TicketForm(instance=ticket)}
+    )
+
 
 @login_required
 def modify_review(request, id):
     review = Review.objects.get(pk=id)
     ticket = review.ticket
-    if request.user != review.user :
+    if request.user != review.user:
         return redirect("posts")
     if request.method == 'POST':
         review_form = forms.ReviewForm(request.POST, instance=review)
@@ -167,4 +186,3 @@ def modify_review(request, id):
         'ticket': ticket,
     }
     return render(request, 'book/ticketAnswer.html', context=context)
-    
